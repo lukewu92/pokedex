@@ -1,3 +1,51 @@
+# Design Pokemon's Pokedex
+
+## Thought process
+1. Try to gather main requirements, these are the must have features.
+2. Find common features that could be expected but aren't specified in requirements (optional)
+3. Figure out the non-functional requirements. These are mostly related to code quality.
+4. Study API and plan out what are the models we'll need to build in typescript.
+5. Codebase architecture (can be opinionated but should have good DX(Developer Experience) )
+
+## Outcome
+
+### Requirements
+- Paginated list of pokemons
+- Detailed page of a pokemon
+- Add mock pokemon feature that doesn't use API
+- E2E testing
+- Mobile Responsive
+- Error Handling
+
+### Good to haves features
+- Searching
+- Filter by type
+- Sorting
+
+### Non-functional Requirements
+- Loading indicators
+- Infintie scrolling
+- Optimization for number of rendered items on screen to prevent memory overflow
+- Added pokemon should persist even after refreshing page
+- Should be easy to plug in Add Pokemon API to replace mock ones.
+
+### Non-achieveable requirements
+- Sorting with added pokemons + fetched ones. This will not be achievable for paginated list because to do this, we'll need to get entire list of pokemon to combine with added ones. Otherwise, this will result in lost of data accuracy.
+
+
+#### Step by steps
+1. Choose a framework. Decided to go for NextJS because it's much faster for me to create MVPs and deploy them.
+2. Start with base nextjs typescript boilerplate (with eslint).
+3. Install some node packages I plan to use. (prettier, tailwindcss, react-query, axios)
+  - prettier for code formatting consistency
+  - tailwindcss, faster styling and smaller css bundle
+  - react-query for handling data-fetching states (can be used for local states as well, didn't use Redux because it felt overkill)
+  - axios over fetch() because it's just easier and require less code to handle responses from API
+4. Setup codebase structure
+5. Setup API functions & Models
+6. 
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
