@@ -1,3 +1,4 @@
+import { useGetAddedPokemons } from '@hooks/pokemon/useGetAddedPokemons';
 import { useGetPokemonDetails } from '@hooks/pokemon/useGetPokemonDetails';
 import { useGetPokemons } from '@hooks/pokemon/useGetPokemons';
 import Image from 'next/image';
@@ -30,24 +31,61 @@ const PokemonListItem = ({ name }: { name: string }) => {
         {name.toUpperCase()}
       </span>
       {data && (
-        <div className='flex gap-2'>
+        <div className="flex gap-2">
           {data.types.map((t) => (
-            <span key={t.slot} className='text-slate-900 bg-white/80 p-1 rounded text-[8px]'>{t.type.name.toUpperCase()}</span>
+            <span
+              key={t.slot}
+              className="text-slate-900 bg-white/80 p-1 rounded text-[8px]"
+            >
+              {t.type.name.toUpperCase()}
+            </span>
           ))}
-          </div>
+        </div>
       )}
     </div>
   )
 }
 
-export const PokemonList = () => {
-  const { data, isLoading, isFetchingNextPage, isError, error, hasNextPage, fetchNextPage } =
-    useGetPokemons()
+export const AddedPokemonList = () => {
+  const { data: addedPokemons, isLoading: isLoadingAddedPokemons } =
+    useGetAddedPokemons()
 
-    
+  if (!addedPokemons || !addedPokemons?.length) return null
   return (
-    <div className='flex flex-col gap-4'>
-      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 min-h-[400px] sm:p-6 sm:gap-6">
+    <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+      <div className="flex items-center gap-4 whitespace-nowrap text-base">
+        <span>{`Added Pokemons:`}</span>
+        <span>{addedPokemons?.length ?? "0"}</span>
+      </div>
+      {isLoadingAddedPokemons && <Loading />}
+      {addedPokemons &&
+        addedPokemons?.map(({ name }) => (
+          <PokemonListItem key={name} name={name} />
+        ))}
+    </div>
+  )
+}
+
+export const PokemonList = () => {
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    isError,
+    error,
+    hasNextPage,
+    fetchNextPage,
+  } = useGetPokemons()
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className='flex items-center gap-4'>
+        <button className='w-12 h-12 flex items-center justify-center rounded bg-white text-slate-900 ml-auto hover:opacity-70 active:opacity-90 active:scale-95'>
+          <span className='text-5xl -translate-y-[6px]'>+</span>
+        </button>
+      </div>
+      <AddedPokemonList />
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 min-h-[400px] sm:gap-6">
         {isLoading && <Loading overlay />}
         {data &&
           data?.results.map(({ name }) => (
@@ -55,12 +93,17 @@ export const PokemonList = () => {
           ))}
       </div>
       {hasNextPage && !isFetchingNextPage && (
-        <button className="bg-white text-black rounded p-4 mx-auto text-lg hover:opacity-70" onClick={() => fetchNextPage()}>
+        <button
+          className="bg-white text-black rounded p-4 mx-auto text-lg hover:opacity-70"
+          onClick={() => fetchNextPage()}
+        >
           LOAD MORE
         </button>
       )}
-      {isFetchingNextPage && <Loading className='my-4' />}
-      {isError && <span className='bg-red-100 text-red-500'>{error?.message}</span>}
+      {isFetchingNextPage && <Loading className="my-4" />}
+      {isError && (
+        <span className="bg-red-100 text-red-500">{error?.message}</span>
+      )}
     </div>
   )
 }
