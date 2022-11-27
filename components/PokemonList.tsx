@@ -1,8 +1,10 @@
+import { AddPokemonPopup } from '@components/AddPokemonPopup';
 import { useGetAddedPokemons } from '@hooks/pokemon/useGetAddedPokemons';
 import { useGetPokemonDetails } from '@hooks/pokemon/useGetPokemonDetails';
 import { useGetPokemons } from '@hooks/pokemon/useGetPokemons';
+import { PlusIcon } from '@icons/PlusIcon';
 import Image from 'next/image';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Loading } from './Loading';
 
@@ -12,7 +14,7 @@ const PokemonListItem = ({ name }: { name: string }) => {
   return (
     <div className="relative flex flex-col items-center justify-center rounded sm:rounded-lg border border-slate-400 p-4 gap-4 aspect-square">
       <div className="relative w-full max-w-[200px] aspect-square bg-slate-900/50 flex items-center justify-center rounded-xl">
-        {data && (
+        {data?.sprites && (
           <Image
             width={200}
             height={200}
@@ -30,7 +32,7 @@ const PokemonListItem = ({ name }: { name: string }) => {
       <span className="font-medium text-white text-xs sm:text-sm">
         {name.toUpperCase()}
       </span>
-      {data && (
+      {data?.types && (
         <div className="flex gap-2">
           {data.types.map((t) => (
             <span
@@ -67,6 +69,7 @@ export const AddedPokemonList = () => {
 }
 
 export const PokemonList = () => {
+  const [addPokemonPopupVisible, setAddPokemonPopupVisible] = useState(false)
   const {
     data,
     isLoading,
@@ -77,13 +80,16 @@ export const PokemonList = () => {
     fetchNextPage,
   } = useGetPokemons()
 
+  const togglePopupVisibility = useCallback(() => setAddPokemonPopupVisible(prev => !prev),[])
+
   return (
     <div className="flex flex-col gap-4">
       <div className='flex items-center gap-4'>
-        <button className='w-12 h-12 flex items-center justify-center rounded bg-white text-slate-900 ml-auto hover:opacity-70 active:opacity-90 active:scale-95'>
-          <span className='text-5xl -translate-y-[6px]'>+</span>
+        <button onClick={togglePopupVisibility} className='w-12 h-12 flex items-center justify-center rounded bg-white text-slate-900 ml-auto hover:opacity-70 active:opacity-90 active:scale-95'>
+          <PlusIcon className='text-4xl' />
         </button>
       </div>
+      {addPokemonPopupVisible && <AddPokemonPopup onClosePopup={togglePopupVisibility} />}
       <AddedPokemonList />
       <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 min-h-[400px] sm:gap-6">
         {isLoading && <Loading overlay />}
