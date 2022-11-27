@@ -20,7 +20,22 @@ export type IPokemonSprite = {
   back_shiny: string;
   front_default: string;
   front_shiny: string;
+}
 
+export type IAbility = {
+  ability: {
+    name: string;
+    url: string;
+  },
+  is_hidden: boolean;
+  slot: number;
+}
+
+export type IMove = {
+  move: {
+    name: string;
+    url: string;
+  },
 }
 
 export type IPokemon = {
@@ -32,4 +47,6 @@ export type IPokemon = {
   types: IPokemonType[];
   stats: IPokemonStat[];
   sprites: IPokemonSprite;
+  abilities: IAbility[];
+  moves: IMove[]
 }

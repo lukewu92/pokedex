@@ -10,6 +10,9 @@ export const useGetPokemonDetails = ({
 }: IGetPokemonDetailsAPIParams) => {
   return useQuery<IGetPokemonDetailsAPIResponse>(
     [getPokemonDetailsQueryKey, nDex ?? name],
-    async () => await getPokemonDetailAPI({ nDex, name })
+    async () => await getPokemonDetailAPI({ nDex, name }),
+    {
+      enabled: !!(nDex || name)
+    }
   )
 }

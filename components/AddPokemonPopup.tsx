@@ -75,7 +75,7 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
 
   const onChangeFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    console.log("files", files)
+    // console.log("files", files)
     if (files?.[0]) {
       const img = new Image()
       img.onload = () => {
@@ -91,7 +91,6 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
   const addFile = useCallback(() => {
     fileUploadRef.current?.click()
   }, [fileUploadRef])
-
 
   /* Pokemon Types Events */
   const addType = useCallback(() => {
@@ -119,7 +118,6 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
     }))
   }, [])
 
-
   /* On Submit */
   const submitPokemon = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
@@ -131,6 +129,7 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
       }
 
       let errors: IError
+      const oldAddedPokemons = data
       Object.keys(submitFormData).forEach((key) => {
         //@ts-ignore
         if (!Boolean(submitFormData[key])) {
@@ -138,27 +137,44 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
         }
       })
 
+      if (
+        submitFormData.name &&
+        oldAddedPokemons?.find((p) => p.name === submitFormData.name)
+      ) {
+        errors = { ...errors, ["duplicated-name"]: true, ["name"]: true }
+      }
+
       if (errors) {
         setErrors(errors)
       }
       setErrors(errors)
+      // console.log('errors', errors)
 
-      return mutate({
-        name: formData.name,
-        imageData: formData.imageData,
-        types: formData.types,
-      })
+      if(!errors) {
+        mutate({
+          name: formData.name,
+          imageData: formData.imageData,
+          types: formData.types,
+        }, {
+          onSuccess: onClose
+        })
+      }
     },
-    [formData.imageData, formData.name, formData.types],
+    [formData.imageData, formData.name, formData.types, data],
   )
-
-  console.log('errors', errors)
 
   return (
     <form
-      className="flex flex-col bg-black w-full p-4 border border-slate-50/10 flex-1 rounded-md gap-4"
+      className="flex relative flex-col bg-black w-full p-4 border border-slate-50/10 flex-1 rounded-md gap-4"
       onSubmit={submitPokemon}
     >
+      {/* Overlay loader for when user submits */}
+      {isAddingPokemon && (
+        <div className="z-50 absolute left-0 top-0 right-0 bottom-0 flex flex-col text-center items-center justify-center bg-black/80">
+          <Loading />
+          <span className="animate-pulse">Adding Pokemon...</span>
+        </div>
+      )}
       {/* Photo Upload Field */}
       <div className="flex flex-col gap-3 mx-auto text-center">
         <input
@@ -174,7 +190,11 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
         <button
           type="button"
           onClick={addFile}
-          className={`group border relative ${errors?.['imageData'] ? 'border-4 border-red-500 transition-none animate-shake bg-red-500/10 text-red-500' : 'border-slate-50'} rounded-md w-[200px] h-[200px] mx-auto flex items-center justify-center cursor-pointer transition-all sm:hover:text-black sm:hover:bg-white sm:active:scale-90`}
+          className={`group border relative ${
+            errors?.["imageData"]
+              ? "border-4 border-red-500 transition-none animate-shake bg-red-500/10 text-red-500"
+              : "border-slate-50"
+          } rounded-md w-[200px] h-[200px] mx-auto flex items-center justify-center cursor-pointer transition-all sm:hover:text-black sm:hover:bg-white sm:active:scale-90`}
         >
           {imageLoading && (
             <div className="absolute z-20 top-0 bottom-0 right-0 left-0 flex items-center justify-center bg-black rounded-[inherit]">
@@ -185,7 +205,7 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
             <NextImage
               width={200}
               height={200}
-              className={'max-h-full w-auto border border-transparent'}
+              className={"max-h-full w-auto border border-transparent"}
               alt="uploaded-pokemon-photo"
               src={imageSrc}
             />
@@ -207,12 +227,20 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
         <Label>Name:</Label>
         <Input
           autoComplete={"off"}
-          className={`${errors?.['name'] ? 'outline outline-4 !outline-red-500 transition-none animate-shake': 'bg-slate-900'}`}
+          className={`${
+            errors?.["name"]
+              ? "outline outline-4 !outline-red-500 transition-none animate-shake"
+              : "bg-slate-900"
+          }`}
           name="name"
           onChange={onChange}
           value={formData?.name}
         />
       </div>
+      {/* Check if pokemon name already existed in added pokemon list. */}
+      {errors?.["duplicated-name"] && (
+        <span className='text-sm text-red-500 -mt-4'>Name already existed!</span>
+      )}
 
       {/* Pokemon Types Field */}
       <div className="flex gap-6 justify-between">
@@ -246,7 +274,7 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
               <MinusIcon />
             </button>
             <button
-            type="button"
+              type="button"
               onClick={addType}
               className="flex-1 w-9 h-9 flex items-center justify-center text-center bg-slate-700/10 text-4xl hover:opacity-70"
             >
