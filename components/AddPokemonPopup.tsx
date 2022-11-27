@@ -229,7 +229,7 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
           autoComplete={"off"}
           className={`${
             errors?.["name"]
-              ? "outline outline-4 !outline-red-500 transition-none animate-shake"
+              ? "outline !outline-4 !outline-red-500 transition-none animate-shake"
               : "bg-slate-900"
           }`}
           name="name"
