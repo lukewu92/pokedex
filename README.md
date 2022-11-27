@@ -13,19 +13,19 @@
 - Paginated list of pokemons
 - Detailed page of a pokemon
 - Add mock pokemon feature that doesn't use API
-- E2E testing
-- Mobile Responsive
-- Error Handling
 
 ### Good to haves features
 - Searching
 - Filter by type
 - Sorting
+- E2E testing
+- Mobile Responsive
+- Error Handling
 
 ### Non-functional Requirements
 - Loading indicators
-- Infintie scrolling
-- Optimization for number of rendered items on screen to prevent memory overflow
+- Infinity scrolling
+- Optimization for number of rendered items on screen to prevent memory overflow (can use `react-virtual` to deal with this)
 - Added pokemon should persist even after refreshing page
 - Should be easy to plug in Add Pokemon API to replace mock ones.
 
@@ -34,16 +34,50 @@
 
 
 #### Step by steps
-1. Choose a framework. Decided to go for NextJS because it's much faster for me to create MVPs and deploy them.
-2. Start with base nextjs typescript boilerplate (with eslint).
-3. Install some node packages I plan to use. (prettier, tailwindcss, react-query, axios)
-  - prettier for code formatting consistency
-  - tailwindcss, faster styling and smaller css bundle
-  - react-query for handling data-fetching states (can be used for local states as well, didn't use Redux because it felt overkill)
-  - axios over fetch() because it's just easier and require less code to handle responses from API
-4. Setup codebase structure
-5. Setup API functions & Models
-6. 
+1.  Choose a framework. Decided to go for NextJS because it's much faster for me to create MVPs and deploy them.
+2.  Start with base nextjs typescript boilerplate (with eslint).
+3.  Install some node packages I plan to use. (prettier, tailwindcss, react-query, axios)
+    - prettier for code formatting consistency
+    - tailwindcss, faster styling and smaller css bundle
+    - react-query for handling data-fetching states (can be used for local states as well, didn't use Redux because it felt overkill)
+    - axios over fetch() because it's just easier and require less code to handle responses from API
+4.  Setup codebase structure
+5.  Setup API functions & Models structure
+
+6. Setup react-query client
+##### Starts implemented API -  Fetching pokemons
+7.  Setup fetch pokemons API and models
+8.  Setup query hooks to fetch pokemon list
+9. Setup query hooks to fetch pokemon details by pokemon name or id
+
+##### Pokemon list UI
+10. Create list component that calls the query hooks to fetch pokemon list.
+11. Create listing of pokemon that shows (Pokemon Index, Name, Image, Type)
+12. Noticed that, these info needs to call fetch pokemon details to get image
+13. Fetch pokemon details as well for every pokemon, but use a different query key
+14. Show loaders while pokemon infos are being fetched but show name first.
+15. Display `PokemonID`, `Name`, `Image`, `Type` to pokemon list item.
+16. Make it responsive
+17. Create interaction, clicking on it will bring user to `/pokemons/{{pokemonId}}` route.
+
+##### On Pokemon Detail page
+18. Retrieve pokemonId from router
+19. Fetch pokemon details with pokemonId by calling the same query hooks as previous one to get pokemon details (shouldn't have to call api again unless cache/refresh clears)
+20. Add a back button + show detailed pokemon information.
+21. Show `Image`, `Types`, `Weight`, `Height`, `Moves`, `Abilities`, `Stats`
+
+##### Adding a Pokemon (will be using indexedDB for browser storage)
+22.  Setup indexedDB (for storing pokemon info locally) - Using this because larger size limit (for images)
+23. IndexedDB initialization flow - OpenDB -> Create DB tables/object store (precheck before creating)
+24. Add functions to add a pokemon record into object store
+25. Get functions to get pokemon list
+26. Setup query hooks to add to existing added pokemon list & to fetch from list
+
+##### Sanitize added pokemon data from form data
+27. Since we're gonna be uploading images, we will need to convert image data into base64 and vice versa.
+28. Call query hook to add pokemon list which also calls function to store record into object store in indexedDB.
+29. update query data manually after adding to indexedDB is successful to match query data with indexedDB.
+
 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).

@@ -192,7 +192,7 @@ export const PokemonList = () => {
       if (loadMoreObserver && loadMoreButton)
         loadMoreObserver.unobserve(loadMoreButton)
     }
-  }, [Boolean(data), isFetchingNextPage, fetchNextPage])
+  }, [data, isFetchingNextPage, fetchNextPage])
 
   const showLoadMoreButton =
     data?.count && !isLoading && hasNextPage && !isFetchingNextPage

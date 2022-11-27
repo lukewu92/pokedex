@@ -50,8 +50,8 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
 
         setFormData((prevState) => ({
           ...prevState,
-          // @ts-ignore
           [name]: addValueToArray(
+            // @ts-ignore
             prevState[name]!,
             Number(target.dataset?.jsArrayIndex),
             target.value,
@@ -160,7 +160,7 @@ const AddPokemonForm = ({ onClose }: { onClose: () => void }) => {
         })
       }
     },
-    [formData.imageData, formData.name, formData.types, data],
+    [formData.imageData, formData.name, formData.types, data, onClose, mutate],
   )
 
   return (

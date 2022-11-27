@@ -14,7 +14,7 @@ export default function PokemonDetail() {
     name: pokemonName as string,
   })
 
-  const goBack = useCallback(() => router.back(), [])
+  const goBack = useCallback(() => router.back(), [router])
 
   return (
     <div>
@@ -35,8 +35,8 @@ export default function PokemonDetail() {
                 <Image
                   width={300}
                   height={300}
-                  alt={data?.name}
-                  src={data?.sprites.front_default}
+                  alt={data?.name ?? ''}
+                  src={data?.sprites?.front_default ?? ''}
                   className="rounded-xl bg-slate-900"
                 />
                 <div className="flex flex-col gap-3 mx-auto w-full max-w-[160px]">
